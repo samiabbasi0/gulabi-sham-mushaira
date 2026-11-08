@@ -96,6 +96,22 @@
     document.querySelectorAll('.rv').forEach((el) => el.classList.add('in'));
   }
 
+  /* ---------- in-page links: eased scroll that works everywhere ---------- */
+  document.addEventListener('click', (ev) => {
+    const a = ev.target.closest('a[href^="#"]'); if (!a) return;
+    const id = a.getAttribute('href').slice(1), el = id ? document.getElementById(id) : document.body;
+    if (!el) return;
+    ev.preventDefault();
+    const off = innerWidth >= 960 ? 76 : 64;
+    const to = id === 'top' ? 0 : Math.max(0, el.getBoundingClientRect().top + scrollY - off);
+    history.pushState(null, '', '#' + id);
+    if (reduce) { scrollTo(0, to); return; }
+    const from = scrollY, d = to - from, dur = Math.min(1100, 450 + Math.abs(d) * 0.12), t0 = performance.now();
+    const ease = (k) => (k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+    const step = (t) => { const k = Math.min(1, (t - t0) / dur); scrollTo(0, from + d * ease(k)); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+
   /* ---------- header, floating button, parallax ---------- */
   const bar = document.getElementById('bar'), fab = document.getElementById('fab');
   const hide = new Set();
