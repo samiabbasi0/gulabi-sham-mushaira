@@ -122,12 +122,16 @@
     });
     document.querySelectorAll('.hero .ctas, #cta, .foot').forEach((el) => fio.observe(el));
   }
+  // solid header once the top of the page has scrolled away (no scroll events needed)
+  const top = document.createElement('div');
+  top.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:40px;pointer-events:none';
+  document.body.prepend(top);
+  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => bar.classList.toggle('solid', !e.isIntersecting)).observe(top);
   const pic = document.querySelector('.hero-arch picture');
   const wide = matchMedia('(min-width: 960px)');
   let ticking = false;
   function onScroll() {
     const y = scrollY;
-    bar.classList.toggle('solid', y > 30);
     if (pic && wide.matches && !reduce && y < innerHeight * 1.2) pic.style.transform = `translate3d(0,${r2(y * 0.07)}px,0)`;
     ticking = false;
   }
